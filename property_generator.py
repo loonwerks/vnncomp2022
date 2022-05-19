@@ -41,20 +41,22 @@ PERTURBATIONS = [2, 4, 8, 16]  # number of inputs to perturb
 # monotonicity properties
 ALPHA = 10                     # time units  # TODO: check
 SHIFT = [5, 10, 20]            # percent
+# if-then properties
+NUM_CI_RANGES = [5, 7, 9]
 
 
 def generate_robustness_properties(path: str):
 
     for w in WINDOW_SIZES:
         mat = scipy.io.loadmat(os.path.join(path, f'test_data_w{w}.mat'))
-        testdata = mat['sequences']
+        testdata = mat['sequences'][0]
 
         for d in DELTAS:
             for num_p in PERTURBATIONS:
                 # take a random input sequence (window) from the test set
-                idx = random.randint(0, len(testdata[0]) - 1)
-                x = testdata[0][idx][0]
-                y = testdata[0][idx][1].item()
+                idx = random.randint(0, len(testdata) - 1)
+                x = testdata[idx][0]
+                y = testdata[idx][1].item()
 
                 # generate perturbation positions for the input window
                 row_range = [0, x.shape[1] - 1]
@@ -112,16 +114,16 @@ def generate_monotonicity_properties(path: str):
 
     for w in WINDOW_SIZES:
         mat = scipy.io.loadmat(os.path.join(path, f'test_data_w{w}.mat'))
-        testdata = mat['sequences']
+        testdata = mat['sequences'][0]
 
         for s in SHIFT:
             # randomly choose a Condition Indicator (CI) to apply a monotonic shift
             ci_idx = random.randint(0, LAST_CI_IDX)
 
             # take a random input sequence (window) from the test set
-            idx = random.randint(0, len(testdata[0]) - 1)
-            x = testdata[0][idx][0]
-            y = testdata[0][idx][1].item()
+            idx = random.randint(0, len(testdata) - 1)
+            x = testdata[idx][0]
+            y = testdata[idx][1].item()
 
             # generate monotonic shift for the randomly chosen CI
             delta_array = np.zeros(x.shape)
@@ -148,7 +150,33 @@ def generate_monotonicity_properties(path: str):
 
 
 def generate_if_then_properties(path: str):
-    mat = scipy.io.loadmat(os.path.join(path, 'test_set.mat'))
+
+    w = 20
+    for i in NUM_CI_RANGES:
+        # pick a random if-then property from the mat file
+        mat = scipy.io.loadmat(
+            os.path.join(path, f'if_then_properties_{i}levels.mat'))
+        properties = mat['if_then'][0]
+        idx = random.randint(0, len(properties) - 1)
+
+        # define input/output bounds
+        lb_in = properties[idx][1]
+        ub_in = properties[idx][2]
+        lb_out = properties[idx][3]
+        ub_out = properties[idx][4]
+
+        # define variable types
+        types = np.full(lb_in.shape, 'Real', dtype='<U4')
+        bool_col = np.array(['Bool' for i in range(0, lb_in.shape[0])])
+        for t in BOOL_FEATURES:
+            types[:, t] = bool_col
+
+        # generate a vnnlib file
+        property_name = f'if_then_{i}levels_w{w}.vnnlib'
+        spec_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                 'specs', property_name)
+        write_vnnlib_spec('monotonicity', spec_path, lb_in.flatten(),
+                          ub_in.flatten(), types.flatten(), lb_out, ub_out)
 
 
 def write_vnnlib_spec(
@@ -235,4 +263,4 @@ if __name__ == '__main__':
 
     generate_robustness_properties(data_path)
     generate_monotonicity_properties(data_path)
-    # generate_if_then_properties(args.window, args.ranges)
+    generate_if_then_properties(data_path)
