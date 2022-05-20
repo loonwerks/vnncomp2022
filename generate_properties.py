@@ -21,10 +21,9 @@ Following types of properties are generated
 import os
 import argparse
 import numpy as np
-import pandas as pd
 import random
 import scipy.io
-import shutil
+# import shutil
 from typing import List, Dict, Union
 
 
