@@ -46,7 +46,16 @@ NUM_CI_RANGES = [5, 7, 9]
 
 
 def generate_robustness_properties(path: str):
+    '''
+    Generate local robustness properties for randomly selected local points.
+    Properties are generated with following parameters:
 
+        - window size (i.e., for CNNs with different input sizes)
+        - delta (input perturbation percentage)
+        - number of perturbations
+
+    For each property a vnnlib file is generated.
+    '''
     for w in WINDOW_SIZES:
         mat = scipy.io.loadmat(os.path.join(path, f'test_data_w{w}.mat'))
         testdata = mat['sequences'][0]
@@ -111,7 +120,15 @@ def generate_random_perturbation_pos(n, range_x, range_y):
 
 
 def generate_monotonicity_properties(path: str):
+    '''
+    Generate local monotonicity properties for randomly selected local points.
+    Properties are generated with following parameters:
 
+        - window size (i.e., for CNNs with different input sizes)
+        - shift (percentage of monotonic shift for a randomly chosen feature)
+
+    For each property a vnnlib file is generated.
+    '''
     for w in WINDOW_SIZES:
         mat = scipy.io.loadmat(os.path.join(path, f'test_data_w{w}.mat'))
         testdata = mat['sequences'][0]
@@ -150,7 +167,12 @@ def generate_monotonicity_properties(path: str):
 
 
 def generate_if_then_properties(path: str):
-
+    '''
+    Generate if-then properties.
+    Property values have been pre-generated in Matlab. This function reads
+    .mat files and picks a random property from each file. There are several
+    files that correspond to different number of ranges for each feature.
+    '''
     w = 20
     for i in NUM_CI_RANGES:
         # pick a random if-then property from the mat file
@@ -162,8 +184,8 @@ def generate_if_then_properties(path: str):
         # define input/output bounds
         lb_in = properties[idx][1]
         ub_in = properties[idx][2]
-        lb_out = properties[idx][3]
-        ub_out = properties[idx][4]
+        lb_out = properties[idx][3].item()
+        ub_out = properties[idx][4].item()
 
         # define variable types
         types = np.full(lb_in.shape, 'Real', dtype='<U4')
@@ -245,21 +267,16 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         '--seed', type=int, default=0, help='random seed for property selection')
-    # parser.add_argument('--testset', type=str, help='test dataset (.mat)')
-    # parser.add_argument('--ranges', type=str, help='table with input ranges (.csv)')
-    # parser.add_argument('--window', type=int, default=20, help='size of the time window for CNN')
     args = parser.parse_args()
 
-    # set the random seed
-    random.seed(56756747)
-
-    # data_path = 'D:/003_ML_Assurance/500_FM/vnn2022/testset.mat'
     data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
     spec_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'specs')
-    try:
-        shutil.rmtree(spec_dir)
-    except OSError as e:
-        print("Error: %s - %s." % (e.filename, e.strerror))
+    # try:
+    #     print('Before')
+    #     shutil.rmtree(spec_dir)
+    #     print('after')
+    # except OSError as e:
+    #     print("Error: %s - %s." % (e.filename, e.strerror))
 
     generate_robustness_properties(data_path)
     generate_monotonicity_properties(data_path)
