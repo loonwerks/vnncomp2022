@@ -262,10 +262,9 @@ def write_vnnlib_spec(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='RUL properties generator (vnnlib)',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        description='RUL properties generator (vnnlib)')
     parser.add_argument(
-        '--seed', type=int, default=0, help='random seed for property selection')
+        'seed', type=int, default=0, help='random seed for property selection')
     args = parser.parse_args()
 
     data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
