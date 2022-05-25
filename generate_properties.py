@@ -87,9 +87,9 @@ def generate_robustness_properties(path: str):
 
                 # define variable types
                 types = np.full(x.shape, 'Real', dtype='<U4')
-                bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
-                for t in BOOL_FEATURES:
-                    types[:, t] = bool_col
+                # bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
+                # for t in BOOL_FEATURES:
+                #     types[:, t] = bool_col
 
                 # generate a vnnlib file
                 property_name = f'robustness_{num_p}perturbations_delta{d}_w{w}.vnnlib'
@@ -153,9 +153,9 @@ def generate_monotonicity_properties(path: str):
 
             # define variable types
             types = np.full(x.shape, 'Real', dtype='<U4')
-            bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
-            for t in BOOL_FEATURES:
-                types[:, t] = bool_col
+            # bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
+            # for t in BOOL_FEATURES:
+            #     types[:, t] = bool_col
 
             # generate a vnnlib file
             property_name = f'monotonicity_CI_shift{s}_w{w}.vnnlib'
@@ -188,9 +188,9 @@ def generate_if_then_properties(path: str):
 
         # define variable types
         types = np.full(lb_in.shape, 'Real', dtype='<U4')
-        bool_col = np.array(['Bool' for i in range(0, lb_in.shape[0])])
-        for t in BOOL_FEATURES:
-            types[:, t] = bool_col
+        # bool_col = np.array(['Bool' for i in range(0, lb_in.shape[0])])
+        # for t in BOOL_FEATURES:
+        #     types[:, t] = bool_col
 
         # generate a vnnlib file
         property_name = f'if_then_{i}levels_w{w}.vnnlib'
