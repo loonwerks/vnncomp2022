@@ -249,11 +249,11 @@ def write_vnnlib_spec(
 
         # output constraints.
         f.write(f"; Output constraints:\n")
-        f.write("(assert (and\n")
+        f.write("(assert (or\n")
         if lb_out is not None:
-            f.write(f"\t(>= Y_{1} {lb_out})")
+            f.write(f"\t(and (>= Y_{0} {lb_out}) ")
         if ub_out is not None:
-            f.write(f"(<= Y_{1} {ub_out})")
+            f.write(f"(<= Y_{0} {ub_out}))")
         # f.write(f"\t(>= Y_{1} {lb_out}) (<= Y_{1} {ub_out})\n")
         # f.write(f"(assert (>= Y_{1} {lb_out}))\n")
         # f.write(f"(assert (<= Y_{1} {ub_out}))\n")
@@ -269,6 +269,10 @@ if __name__ == '__main__':
 
     data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
     spec_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'specs')
+
+    # set the random seed
+    random.seed(args.seed)
+
     # try:
     #     print('Before')
     #     shutil.rmtree(spec_dir)
