@@ -8,9 +8,8 @@
 # -------------------------------------------------------------------------------
 
 '''
-The script accepts as inputs a test dataset a random seed as input (for
-reproducibility purposes). It also uses files from the data folder (.mat/.csv)
-to generate vnnlib properties.
+The script accepts a random seed as input (for reproducibility purposes). It
+also uses files from the data folder (.mat/.csv) to generate vnnlib properties.
 
 Following types of properties are generated
   - Robustness properties (local)
@@ -23,7 +22,6 @@ import argparse
 import numpy as np
 import random
 import scipy.io
-# import shutil
 from typing import List, Dict, Union
 
 
@@ -38,7 +36,7 @@ DELTAS = [5, 10, 20, 40]       # percent
 EPSILON = 10                   # percent
 PERTURBATIONS = [2, 4, 8, 16]  # number of inputs to perturb
 # monotonicity properties
-ALPHA = 10                     # time units  # TODO: check
+ALPHA = 10                     # time units
 SHIFT = [5, 10, 20]            # percent
 # if-then properties
 NUM_CI_RANGES = [5, 7, 9]
@@ -51,6 +49,7 @@ def generate_robustness_properties(path: str):
 
         - window size (i.e., for CNNs with different input sizes)
         - delta (input perturbation percentage)
+        - epsilon (output deviation percentage)
         - number of perturbations
 
     For each property a vnnlib file is generated.
@@ -87,6 +86,8 @@ def generate_robustness_properties(path: str):
 
                 # define variable types
                 types = np.full(x.shape, 'Real', dtype='<U4')
+
+                # 25.05.2022: Bool types are not yet supported by VNN tools
                 # bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
                 # for t in BOOL_FEATURES:
                 #     types[:, t] = bool_col
@@ -125,6 +126,7 @@ def generate_monotonicity_properties(path: str):
 
         - window size (i.e., for CNNs with different input sizes)
         - shift (percentage of monotonic shift for a randomly chosen feature)
+        - ALPHA: admissible non-monotonicity
 
     For each property a vnnlib file is generated.
     '''
@@ -153,6 +155,8 @@ def generate_monotonicity_properties(path: str):
 
             # define variable types
             types = np.full(x.shape, 'Real', dtype='<U4')
+
+            # 25.05.2022: Bool types are not yet supported by VNN tools
             # bool_col = np.array(['Bool' for i in range(0, x.shape[0])])
             # for t in BOOL_FEATURES:
             #     types[:, t] = bool_col
@@ -171,6 +175,9 @@ def generate_if_then_properties(path: str):
     Property values have been pre-generated in Matlab. This function reads
     .mat files and picks a random property from each file. There are several
     files that correspond to different number of ranges for each feature.
+    Properties with fewer ranges are harder to verify.
+
+    NOTE: Overall, these properties seem to be the hardest.
     '''
     w = 20
     for i in NUM_CI_RANGES:
@@ -188,6 +195,8 @@ def generate_if_then_properties(path: str):
 
         # define variable types
         types = np.full(lb_in.shape, 'Real', dtype='<U4')
+
+        # 25.05.2022: Bool types are not yet supported by VNN tools
         # bool_col = np.array(['Bool' for i in range(0, lb_in.shape[0])])
         # for t in BOOL_FEATURES:
         #     types[:, t] = bool_col
@@ -272,13 +281,6 @@ if __name__ == '__main__':
 
     # set the random seed
     random.seed(args.seed)
-
-    # try:
-    #     print('Before')
-    #     shutil.rmtree(spec_dir)
-    #     print('after')
-    # except OSError as e:
-    #     print("Error: %s - %s." % (e.filename, e.strerror))
 
     generate_robustness_properties(data_path)
     generate_monotonicity_properties(data_path)
