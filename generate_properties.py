@@ -33,7 +33,7 @@ LAST_CI_IDX = 7
 BOOL_FEATURES = [9, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 # robustness properties
 DELTAS = [5, 10, 20, 40]       # percent
-EPSILON = 20                   # percent
+EPSILON = 10                   # percent
 PERTURBATIONS = [2, 4, 8, 16]  # number of inputs to perturb
 # monotonicity properties
 ALPHA = 10                     # time units
