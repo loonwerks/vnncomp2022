@@ -33,7 +33,7 @@ LAST_CI_IDX = 7
 BOOL_FEATURES = [9, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 # robustness properties
 DELTAS = [5, 10, 20, 40]       # percent
-EPSILON = 10                   # percent
+EPSILON = 20                   # percent
 PERTURBATIONS = [2, 4, 8, 16]  # number of inputs to perturb
 # monotonicity properties
 ALPHA = 10                     # time units
@@ -93,7 +93,7 @@ def generate_robustness_properties(path: str):
                 #     types[:, t] = bool_col
 
                 # generate a vnnlib file
-                property_name = f'robustness_{num_p}perturbations_delta{d}_w{w}.vnnlib'
+                property_name = f'robustness_{num_p}perturbations_delta{d}_epsilon{EPSILON}_w{w}.vnnlib'
                 spec_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                          'specs', property_name)
                 write_vnnlib_spec('robustness', spec_path, lb_in.flatten(),
