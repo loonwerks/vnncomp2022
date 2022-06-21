@@ -245,7 +245,7 @@ def write_vnnlib_spec(
         # output variables.
         f.write(f"; Output variables:\n")
         f.write("\n")
-        f.write(f"(declare-const Y_{1} Real)\n")
+        f.write(f"(declare-const Y_{0} Real)\n")
         f.write("\n")
 
         # input constraints.
