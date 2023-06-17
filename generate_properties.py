@@ -95,7 +95,7 @@ def generate_robustness_properties(path: str):
                 # generate a vnnlib file
                 property_name = f'robustness_{num_p}perturbations_delta{d}_epsilon{EPSILON}_w{w}.vnnlib'
                 spec_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                         'specs', property_name)
+                                         'vnnlib', property_name)
                 write_vnnlib_spec('robustness', spec_path, lb_in.flatten(),
                                   ub_in.flatten(), types.flatten(), lb_out, ub_out)
 
@@ -164,7 +164,7 @@ def generate_monotonicity_properties(path: str):
             # generate a vnnlib file
             property_name = f'monotonicity_CI_shift{s}_w{w}.vnnlib'
             spec_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                     'specs', property_name)
+                                     'vnnlib', property_name)
             write_vnnlib_spec('monotonicity', spec_path, lb_in.flatten(),
                               ub_in.flatten(), types.flatten(), lb_out, ub_out)
 
@@ -204,7 +204,7 @@ def generate_if_then_properties(path: str):
         # generate a vnnlib file
         property_name = f'if_then_{i}levels_w{w}.vnnlib'
         spec_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                 'specs', property_name)
+                                 'vnnlib', property_name)
         write_vnnlib_spec('monotonicity', spec_path, lb_in.flatten(),
                           ub_in.flatten(), types.flatten(), lb_out, ub_out)
 
@@ -260,9 +260,9 @@ def write_vnnlib_spec(
         f.write(f"; Output constraints:\n")
         f.write("(assert (or\n")
         if lb_out is not None:
-            f.write(f"\t(and (>= Y_{0} {lb_out}) ")
+            f.write(f"\t(and (<= Y_{0} {lb_out}))\n")
         if ub_out is not None:
-            f.write(f"(<= Y_{0} {ub_out}))")
+            f.write(f"\t(and(>= Y_{0} {ub_out}))")
         # f.write(f"\t(>= Y_{1} {lb_out}) (<= Y_{1} {ub_out})\n")
         # f.write(f"(assert (>= Y_{1} {lb_out}))\n")
         # f.write(f"(assert (<= Y_{1} {ub_out}))\n")
@@ -277,7 +277,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
-    spec_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'specs')
+    spec_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'vnnlib')
 
     # set the random seed
     random.seed(args.seed)
