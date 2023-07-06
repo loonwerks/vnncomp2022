@@ -262,7 +262,7 @@ def write_vnnlib_spec(
         if lb_out is not None:
             f.write(f"\t(and (<= Y_{0} {lb_out}))\n")
         if ub_out is not None:
-            f.write(f"\t(and(>= Y_{0} {ub_out}))")
+            f.write(f"\t(and (>= Y_{0} {ub_out}))")
         # f.write(f"\t(>= Y_{1} {lb_out}) (<= Y_{1} {ub_out})\n")
         # f.write(f"(assert (>= Y_{1} {lb_out}))\n")
         # f.write(f"(assert (<= Y_{1} {ub_out}))\n")

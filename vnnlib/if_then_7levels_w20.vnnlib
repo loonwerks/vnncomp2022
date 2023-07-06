@@ -1611,5 +1611,5 @@
 ; Output constraints:
 (assert (or
 	(and (<= Y_0 31))
-	(and(>= Y_0 144))
+	(and (>= Y_0 144))
 ))
